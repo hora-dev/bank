@@ -1,6 +1,6 @@
 
-# entidadbancaria
-### A Spring Rest API for CRUD operations on entidadbancarias
+# bank
+### A Spring Rest API for CRUD operations on banks
 
 <br>
 
@@ -25,11 +25,11 @@ http://localhost:8091/swagger-ui/index.html
 
 <br>
 
-#### Option 1: Start rabbit with docker compose && create entidadbancariaw2mdocker image manually
+#### Option 1: Start rabbit with docker compose && create bank docker image manually
 #### 1. move to infra/rabbitmq/ and run docker-compose up -d
 #### 2. move again to root and run mvn clean package 
-#### 3. docker build -t entidadbancariaw2m .
-#### 4. docker run -p 8091:8091 entidadbancariaw2m
+#### 3. docker build -t bank .
+#### 4. docker run -p 8091:8091 bank
 
 <br>
 
