@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="002" author="rht">
+        <insert tableName="bank">
+            <column name="name" value="HSBC"/>
+        </insert>
+        <insert tableName="bank">
+            <column name="name" value="Galicia"/>
+        </insert>
+        <insert tableName="bank">
+            <column name="name" value="Nacion"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="bank">
+                <where>name in ('HSBC', 'Galicia', 'Nacion')</where>
+            </delete>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

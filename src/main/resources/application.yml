@@ -1,0 +1,40 @@
+server:
+  port: 8091
+
+spring:
+  application:
+    name: bank-api
+  security:
+    user:
+      name: user
+      password: 123456
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: true
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest
+    connection-timeout: 10s
+  cache:
+    type: redis
+  redis:
+    host: redis_service
+    port: 6379
+    timeout: 5000ms
+    connection-timeout: 10s
+
+
+rabbitmq:
+  queue:
+    name: bank.queue
+  exchange:
+    name: bank.exchange
+  routing:
+    key: bank.routing.key
+
+
+logging:
+  level:
+    root: INFO
