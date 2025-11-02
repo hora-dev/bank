@@ -12,6 +12,7 @@ http://localhost:8091/swagger-ui/index.html
 ### Test coverage with sonar
 #### 1. docker run -d --name sonar -p 9000:9000 sonarqube:lts
 #### 2. mvn clean verify sonar:sonar -Dsonar.login=admin -Dsonar.password=admin
+#### 3. login to sonar http://localhost:9000 to see report
 
 <br>
 
