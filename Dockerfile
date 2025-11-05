@@ -20,7 +20,7 @@ FROM openjdk:21-jdk-slim
 WORKDIR /app
 
 # Copiar el JAR de la aplicación al contenedor
-COPY --from=build /app/target/bank-1.0.0-SNAPSHOT.jar app.jar
+COPY --from=build /app/target/bank-api-1.0.0-SNAPSHOT.jar app.jar
 
 # Exponer el puerto en el que corre Spring Boot
 EXPOSE 8091

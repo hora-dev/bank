@@ -23,7 +23,7 @@ public class BankConsumer {
                 handleBankUpdated(event.getBank());
                 break;
             case "DELETED":
-                handleBankDeleted(event.getBank().getId());
+                handleBankDeleted(event.getBank().id());
                 break;
             default:
                 log.warn("Unknown action: {}", event.getAction());

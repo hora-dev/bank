@@ -2,7 +2,9 @@ package com.rht.bank.application.service;
 
 import com.rht.bank.application.messaging.BankEvent;
 import com.rht.bank.application.port.in.BankUseCase;
+import com.rht.bank.application.port.out.BankRepositoryPort;
 import com.rht.bank.domain.model.Bank;
+import com.rht.bank.infraestructure.persistence.BankEntity;
 import com.rht.bank.infraestructure.adapter.outbound.BankRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +24,7 @@ import org.springframework.web.client.HttpClientErrorException;
 @Slf4j
 public class BankServiceImpl implements BankUseCase {
 
-    private final BankRepository bankRepository;
+    private final BankRepositoryPort bankRepositoryPort;
 
     private final RabbitTemplate rabbitTemplate;
 
@@ -38,42 +40,48 @@ public class BankServiceImpl implements BankUseCase {
         rabbitTemplate.convertAndSend(exchange, routingKey, event);
     }
 
-    public Page<Bank> getAllBanks(Pageable pageable) {
+    /*public Page<BankEntity> getAllBanks(Pageable pageable) {
         return bankRepository.findAll(pageable);
     }
 
     @Cacheable(value = "bank_redis", key = "#id")
-    public Bank getBankById(Long id) {
+    public BankEntity getBankById(Long id) {
         log.info("Searching bank in data base...");
         return bankRepository.findById(id)
                 .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "bank id " + id + " not found"));
+    }*/
+
+    @Override
+    public Page<BankEntity> getAllBanks(Pageable pageable) {
+        return null;
     }
 
-    public Bank createBank(String bankName) {
-        Bank bank = new Bank(null, bankName);
-        bank = bankRepository.save(bank);
-        sendBankEvent("CREATED", bank);
+    @Override
+    public Bank getBankById(Long id) {
+        return bankRepositoryPort.getBankById(id);
+    }
+
+    public Bank createBank(Bank bank) {
+        Bank createdBank = bankRepositoryPort.createBank(bank);
+        sendBankEvent("CREATED", createdBank);
+        return createdBank;
+    }
+
+    @Override
+    public Bank updateBank(Bank bank) {
+        Bank updatedBank = bankRepositoryPort.updateBank(bank);
+        sendBankEvent("UPDATED", updatedBank);
         return bank;
     }
 
-    @CachePut(value = "bank_redis", key = "#id")
-    public Bank updateBank(Long id, String bankName) {
-        Bank bank = bankRepository.findById(id)
-                .orElseThrow( () -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "bank id " + id + " not found") );
-        bank.setName(bankName);
-        sendBankEvent("UPDATED", bank);
-        return bankRepository.save(bank);
-    }
 
     @CacheEvict(value = "bank_redis", key = "#id")
     public void deleteBank(Long id) {
-        Bank b = bankRepository.findById(id)
-                .orElseThrow( () -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "bank id " + id + " not found") );
-        bankRepository.deleteById(id);
-        sendBankEvent("DELETED", b);
+        Bank deletedBank = bankRepositoryPort.deleteBank(id);
+        sendBankEvent("DELETED", deletedBank);
     }
 
-    public Page<Bank> getBankByName(String name, Pageable pageable) {
+    /*public Page<BankEntity> getBankByName(String name, Pageable pageable) {
         return bankRepository.findByNameContainingIgnoreCase(name, pageable);
-    }
+    }*/
 }

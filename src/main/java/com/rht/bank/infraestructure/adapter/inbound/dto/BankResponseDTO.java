@@ -1,8 +1,8 @@
-package com.rht.bank.domain.model;
+package com.rht.bank.infraestructure.adapter.inbound.dto;
 
 import java.io.Serializable;
 
-public record Bank(
+public record BankResponseDTO(
     Long id,
     String name
 ) implements Serializable {
