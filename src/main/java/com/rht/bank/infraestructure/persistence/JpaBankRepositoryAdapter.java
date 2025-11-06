@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
@@ -50,5 +52,17 @@ public class JpaBankRepositoryAdapter implements BankRepositoryPort {
                 .orElseThrow( () -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "bank id " + id + " not found") );
         springDataBankRepository.deleteById(id);
         return new Bank( b.getId(), b.getName());
+    }
+
+    @Override
+    public Page<Bank> findAllByPages(Pageable pageable) {
+        return springDataBankRepository.findAll(pageable)
+                .map(bankEntity -> new Bank(bankEntity.getId(), bankEntity.getName()));
+    }
+
+    @Override
+    public Page<Bank> getBankByName(String text, Pageable pageable) {
+        return springDataBankRepository.findByNameContainingIgnoreCase(text, pageable)
+                .map(bankEntity -> new Bank(bankEntity.getId(), bankEntity.getName()));
     }
 }

@@ -1,11 +1,9 @@
 package com.rht.bank.infraestructure.adapter.inbound;
 
 import com.rht.bank.application.port.in.BankUseCase;
-import com.rht.bank.application.service.BankServiceImpl;
 import com.rht.bank.domain.model.Bank;
 import com.rht.bank.infraestructure.adapter.inbound.dto.BankRequestDTO;
 import com.rht.bank.infraestructure.adapter.inbound.dto.BankResponseDTO;
-import com.rht.bank.infraestructure.persistence.BankEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -20,13 +18,14 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class BankController {
 
-    private final BankServiceImpl bankService;
     private final BankUseCase bankUseCase;
 
     @Operation(summary = "Get all banks available")
     @GetMapping
-    public ResponseEntity<Page<BankEntity>> getAllBanks(Pageable pageable) {
-        return ResponseEntity.ok(bankService.getAllBanks(pageable));
+    public ResponseEntity<Page<BankResponseDTO>> getAllBanks(Pageable pageable) {
+        return ResponseEntity.ok(
+                bankUseCase.getAllBanks(pageable).map(bank -> new BankResponseDTO(bank.id(), bank.name()))
+        );
     }
 
     @Operation(summary = "Get a bank searching by its id")
@@ -38,9 +37,9 @@ public class BankController {
 
     @Operation(summary = "Get all banks containg a text on their name ")
     @GetMapping("/search/name")
-    public ResponseEntity<Page<BankEntity>> getBankByName(@RequestParam String text, Pageable pageable) {
-        //return ResponseEntity.ok(bankService.getBankByName(text, pageable));
-        return null;
+    public ResponseEntity<Page<BankResponseDTO>> getBankByName(@RequestParam String text, Pageable pageable) {
+        return ResponseEntity.ok(bankUseCase.getBankByName(text, pageable)
+                .map(bank -> new BankResponseDTO(bank.id(), bank.name())));
     }
 
 

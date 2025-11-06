@@ -4,20 +4,14 @@ import com.rht.bank.application.messaging.BankEvent;
 import com.rht.bank.application.port.in.BankUseCase;
 import com.rht.bank.application.port.out.BankRepositoryPort;
 import com.rht.bank.domain.model.Bank;
-import com.rht.bank.infraestructure.persistence.BankEntity;
-import com.rht.bank.infraestructure.adapter.outbound.BankRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 @Service
 @RequiredArgsConstructor
@@ -40,20 +34,8 @@ public class BankServiceImpl implements BankUseCase {
         rabbitTemplate.convertAndSend(exchange, routingKey, event);
     }
 
-    /*public Page<BankEntity> getAllBanks(Pageable pageable) {
-        return bankRepository.findAll(pageable);
-    }
-
-    @Cacheable(value = "bank_redis", key = "#id")
-    public BankEntity getBankById(Long id) {
-        log.info("Searching bank in data base...");
-        return bankRepository.findById(id)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "bank id " + id + " not found"));
-    }*/
-
-    @Override
-    public Page<BankEntity> getAllBanks(Pageable pageable) {
-        return null;
+    public Page<Bank> getAllBanks(Pageable pageable) {
+        return bankRepositoryPort.findAllByPages(pageable);
     }
 
     @Override
@@ -81,7 +63,8 @@ public class BankServiceImpl implements BankUseCase {
         sendBankEvent("DELETED", deletedBank);
     }
 
-    /*public Page<BankEntity> getBankByName(String name, Pageable pageable) {
-        return bankRepository.findByNameContainingIgnoreCase(name, pageable);
-    }*/
+    @Override
+    public Page<Bank> getBankByName(String text, Pageable pageable) {
+        return bankRepositoryPort.getBankByName(text, pageable);
+    }
 }
